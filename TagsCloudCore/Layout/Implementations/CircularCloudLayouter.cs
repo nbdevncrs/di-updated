@@ -1,11 +1,14 @@
 using System.Drawing;
-using TagsCloudCore.CloudLayout.Extensions;
+using TagsCloudCore.Layout.Abstractions;
+using TagsCloudCore.Layout.Extensions;
 
-namespace TagsCloudCore.CloudLayout;
+namespace TagsCloudCore.Layout.Implementations;
 
-public class CircularCloudLayouter(Point center)
+public class CircularCloudLayouter(Point center, IRectangleTightener tightener) : ICloudLayouter
 {
     private readonly List<Rectangle> rectangles = [];
+    private readonly IRectangleTightener tightener = tightener ?? throw new ArgumentNullException(nameof(tightener));
+
     public IEnumerable<Rectangle> PlacedRectangles => rectangles;
     public Point Center { get; } = center;
 
@@ -26,7 +29,7 @@ public class CircularCloudLayouter(Point center)
             currentRectangle = new Rectangle(upperLeftRectangleCorner, rectangleSize);
         } while (currentRectangle.IntersectsAny(rectangles));
 
-        currentRectangle = ToCenterTightener.Tighten(currentRectangle, Center, rectangles);
+        currentRectangle = tightener.Tighten(currentRectangle, Center, rectangles);
 
         rectangles.Add(currentRectangle);
         return currentRectangle;

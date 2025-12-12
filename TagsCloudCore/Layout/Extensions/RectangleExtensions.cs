@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TagsCloudCore.CloudLayout.Extensions;
+namespace TagsCloudCore.Layout.Extensions;
 
 public static class RectangleExtensions
 {

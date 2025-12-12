@@ -1,14 +1,15 @@
 using System.Drawing;
-using TagsCloudCore.CloudLayout.Extensions;
+using TagsCloudCore.Layout.Abstractions;
+using TagsCloudCore.Layout.Extensions;
 
-namespace TagsCloudCore.CloudLayout;
+namespace TagsCloudCore.Layout.Implementations;
 
-public static class ToCenterTightener
+public class ToCenterTightener : IRectangleTightener
 {
-    public static Rectangle Tighten(
+    public Rectangle Tighten(
         Rectangle rectangle,
         Point cloudCenter,
-        IEnumerable<Rectangle> existingRectangles)
+        IReadOnlyCollection<Rectangle> existingRectangles)
     {
         var existingRectanglesList = existingRectangles.ToList();
         var current = rectangle;
@@ -30,12 +31,16 @@ public static class ToCenterTightener
         moved = MoveOneStepTowardsCenter(current, center);
 
         var isRectangleStationary = moved == current;
-        if (isRectangleStationary) return false;
+        if (isRectangleStationary)
+            return false;
 
         var wouldRectanglesIntersect = moved.IntersectsAny(existingRectangles);
-        if (wouldRectanglesIntersect) return false;
+        if (wouldRectanglesIntersect)
+            return false;
 
-        var doesPositionBecomeBetter = moved.GetDistanceToPoint(center) <= current.GetDistanceToPoint(center);
+        var doesPositionBecomeBetter =
+            moved.GetDistanceToPoint(center) <= current.GetDistanceToPoint(center);
+
         return doesPositionBecomeBetter;
     }
 
@@ -49,6 +54,10 @@ public static class ToCenterTightener
         if (dx == 0 && dy == 0)
             return rectangle;
 
-        return rectangle with { X = rectangle.X + dx, Y = rectangle.Y + dy };
+        return rectangle with
+        {
+            X = rectangle.X + dx,
+            Y = rectangle.Y + dy
+        };
     }
 }

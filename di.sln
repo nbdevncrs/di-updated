@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "di", "FractalPainter/di.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudCore", "TagsCloudCore\TagsCloudCore.csproj", "{B4D8329C-6C02-4530-BAEE-3BD09F4678C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudRunner", "TagsCloudRunner\TagsCloudRunner.csproj", "{D82A482A-731C-4EF6-B461-64BCCFC7D256}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudClient", "TagsCloudClient\TagsCloudClient.csproj", "{D82A482A-731C-4EF6-B461-64BCCFC7D256}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudTests", "TagsCloudTests\TagsCloudTests.csproj", "{0512DF09-67F0-4F95-91A0-D03E445EA24B}"
 EndProject

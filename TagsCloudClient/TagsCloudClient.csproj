@@ -11,4 +11,8 @@
       <ProjectReference Include="..\TagsCloudCore\TagsCloudCore.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="9.0.0" />
+    </ItemGroup>
+
 </Project>

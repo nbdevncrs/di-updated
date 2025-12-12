@@ -1,6 +1,6 @@
 using System.Drawing;
 using FluentAssertions;
-using TagsCloudCore.CloudLayout.Extensions;
+using TagsCloudCore.Layout.Extensions;
 
 namespace TagsCloudTests;
 

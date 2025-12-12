@@ -26,7 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TagsCloudCore\TagsCloudCore.csproj" />
-      <ProjectReference Include="..\TagsCloudRunner\TagsCloudRunner.csproj" />
+      <ProjectReference Include="..\TagsCloudClient\TagsCloudClient.csproj" />
     </ItemGroup>
 
 </Project>

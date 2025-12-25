@@ -12,16 +12,8 @@ public sealed class TxtWordsProvider(string filePath) : IWordsProvider
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
 
-            foreach (var word in SplitWords(line))
+            foreach (var word in WordsProvidingHelpers.SplitWords(line))
                 yield return word;
         }
-    }
-
-    private static IEnumerable<string> SplitWords(string text)
-    {
-        var separators = new[] { ' ', '\t', '.', ',', '!', '?', ';', ':', '[', ']', '(', ')', '"' };
-
-        foreach (var token in text.Split(separators, StringSplitOptions.RemoveEmptyEntries))
-            yield return token;
     }
 }

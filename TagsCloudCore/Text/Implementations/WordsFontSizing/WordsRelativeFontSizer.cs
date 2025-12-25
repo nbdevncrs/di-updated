@@ -7,7 +7,7 @@ public sealed class WordsRelativeFontSizer : IWordsFontSizer
     private readonly int minFontSize;
     private readonly int maxFontSize;
 
-    public WordsRelativeFontSizer(int minFontSize = 10, int maxFontSize = 100)
+    public WordsRelativeFontSizer(int minFontSize = 30, int maxFontSize = 200)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(minFontSize);
         ArgumentOutOfRangeException.ThrowIfLessThan(maxFontSize, minFontSize);
@@ -16,14 +16,17 @@ public sealed class WordsRelativeFontSizer : IWordsFontSizer
         this.maxFontSize = maxFontSize;
     }
 
-    public int GetFontSize(string word, int frequency)
+    public int GetFontSize(string word, int frequency, int maxFrequency)
     {
         ArgumentNullException.ThrowIfNull(word);
 
-        if (frequency <= 0) return minFontSize;
-        
-        var scaled = minFontSize + frequency;
+        if (frequency <= 0 || maxFrequency <= 0)
+            return minFontSize;
 
-        return Math.Clamp(scaled, minFontSize, maxFontSize);
+        var ratio = (float)frequency / maxFrequency;
+
+        var size = minFontSize + ratio * (maxFontSize - minFontSize) * 5;
+
+        return (int)Math.Round(size);
     }
 }

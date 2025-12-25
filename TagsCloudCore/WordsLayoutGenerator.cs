@@ -16,11 +16,13 @@ public sealed class WordsLayoutGenerator(
     {
         var words = provider.GetWords();
         var processed = preprocessor.ProcessWords(words);
-        var frequencies = analyzer.FindFrequencies(processed);
+        var frequencies = analyzer.FindFrequencies(processed).OrderByDescending(f => f.Value).ToList();
+        var maxFrequency = frequencies[0].Value;
 
-        foreach (var (word, freq) in frequencies)
+
+        foreach (var (word, frequency) in frequencies)
         {
-            var fontSize = sizer.GetFontSize(word, freq);
+            var fontSize = sizer.GetFontSize(word, frequency, maxFrequency);
             var size = EstimateSize(word, fontSize);
             var rect = layouter.PutNextRectangle(size);
 

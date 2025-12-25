@@ -21,16 +21,8 @@ public sealed class DocxWordsProvider(string filePath) : IWordsProvider
             if (string.IsNullOrWhiteSpace(text))
                 continue;
 
-            foreach (var word in SplitWords(text))
+            foreach (var word in WordsProvidingHelpers.SplitWords(text))
                 yield return word;
         }
-    }
-
-    private static IEnumerable<string> SplitWords(string text)
-    {
-        var separators = new[] { ' ', '\t', '.', ',', '!', '?', ';', ':', '[', ']', '(', ')', '"' };
-
-        foreach (var token in text.Split(separators, StringSplitOptions.RemoveEmptyEntries))
-            yield return token;
     }
 }

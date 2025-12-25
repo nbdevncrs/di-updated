@@ -14,8 +14,8 @@ namespace TagsCloudClient;
 
 public class TagsCloudModule(
     string filePath,
-    int minFontSize = 10,
-    int maxFontSize = 100,
+    int minFontSize = 30,
+    int maxFontSize = 200,
     int centerX = 0,
     int centerY = 0) : Module
 {

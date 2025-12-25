@@ -15,7 +15,7 @@ public sealed class WordsFrequencyAnalyzer : IWordsFrequencyAnalyzer
             if (string.IsNullOrWhiteSpace(word)) continue;
 
             if (frequencies.TryGetValue(word, out var value))
-                frequencies[word] = ++value;
+                frequencies[word] = value + 1;
             
             else frequencies[word] = 1;
         }

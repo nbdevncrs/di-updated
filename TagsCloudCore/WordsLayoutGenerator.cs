@@ -32,9 +32,12 @@ public sealed class WordsLayoutGenerator(
 
     private static Size EstimateSize(string word, int fontSize)
     {
-        var width = word.Length * (fontSize / 2);
-        var height = fontSize;
+        using var bitmap = new Bitmap(1, 1);
+        using var graphics = Graphics.FromImage(bitmap);
+        using var font = new Font("Arial", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
 
-        return new Size(width, height);
+        var sizeF = graphics.MeasureString(word, font);
+        
+        return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
     }
 }

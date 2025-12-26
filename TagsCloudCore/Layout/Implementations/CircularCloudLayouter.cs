@@ -26,7 +26,10 @@ public class CircularCloudLayouter(Point center, IRectangleTightener tightener) 
         do
         {
             var upperLeftRectangleCorner = GetNextPossibleRectanglePosition();
-            currentRectangle = new Rectangle(upperLeftRectangleCorner, rectangleSize);
+            
+            currentRectangle = new Rectangle(upperLeftRectangleCorner.X - rectangleSize.Width / 2,
+                upperLeftRectangleCorner.Y - rectangleSize.Height / 2, rectangleSize.Width, rectangleSize.Height);
+            
         } while (currentRectangle.IntersectsAny(rectangles));
 
         currentRectangle = tightener.Tighten(currentRectangle, Center, rectangles);

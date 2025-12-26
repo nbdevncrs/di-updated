@@ -5,15 +5,12 @@ namespace TagsCloudCore.Text.Implementations.WordsFontSizing;
 public sealed class WordsRelativeFontSizer : IWordsFontSizer
 {
     private readonly int minFontSize;
-    private readonly int maxFontSize;
 
-    public WordsRelativeFontSizer(int minFontSize = 30, int maxFontSize = 200)
+    public WordsRelativeFontSizer(int minFontSize = 30)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(minFontSize);
-        ArgumentOutOfRangeException.ThrowIfLessThan(maxFontSize, minFontSize);
 
         this.minFontSize = minFontSize;
-        this.maxFontSize = maxFontSize;
     }
 
     public int GetFontSize(string word, int frequency, int maxFrequency)
@@ -25,7 +22,7 @@ public sealed class WordsRelativeFontSizer : IWordsFontSizer
 
         var ratio = (float)frequency / maxFrequency;
 
-        var size = minFontSize + ratio * (maxFontSize - minFontSize) * 5;
+        var size = minFontSize + ratio * minFontSize * 5;
 
         return (int)Math.Round(size);
     }

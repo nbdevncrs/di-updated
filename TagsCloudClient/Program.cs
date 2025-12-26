@@ -1,5 +1,5 @@
-using Autofac;
-using TagsCloudCore;
+using System.Drawing;
+using TagsCloudClient.DI;
 using TagsCloudCore.Visualization;
 
 namespace TagsCloudClient;
@@ -8,54 +8,49 @@ internal static class Program
 {
     public static void Main()
     {
-        GenerateTagsCloud(
-            sourceFileName: "input_small.txt",
-            outputFileName: "cloud_small.png");
+        Generate("input_firstsize.txt", "cloud_firstsize.png", 20,
+            textColor: Color.BlueViolet,
+            backgroundColor: Color.White, 
+            fontFamily: "Segoe UI");
 
-        GenerateTagsCloud(
-            sourceFileName: "input_medium.txt",
-            outputFileName: "cloud_medium.png");
+        Generate("input_secondsize.txt", "cloud_secondsize.png", 20,
+            textColor: Color.Red,
+            backgroundColor: Color.Black,
+            imageSize: new Size(1920, 1080)
+            );
 
-        GenerateTagsCloud(
-            sourceFileName: "input_big.txt",
-            outputFileName: "cloud_big.png");
+        Generate("input_thirdsize.txt", "cloud_thirdsize.png", 20);
+        Generate("input_fourthsize.txt", "cloud_fourthsize.png", 20);
+        Generate("input_story.docx", "cloud_story.png", 20);
     }
 
-    private static void GenerateTagsCloud(
-        string sourceFileName,
-        string outputFileName)
+    private static void Generate(
+        string inputFileName,
+        string outputFileName,
+        int minFontSize,
+        IEnumerable<string>? stopWords = null,
+        Color? textColor = null,
+        Color? backgroundColor = null,
+        string fontFamily = "Arial",
+        Size? imageSize = null)
     {
-        var projectRoot = Path.GetFullPath(
-            Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+        var projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 
-        var inputPath = Path.Combine(
-            projectRoot,
-            "Inputs",
-            sourceFileName);
-
-        var outputPath = Path.Combine(
-            projectRoot,
-            "Outputs",
-            outputFileName);
+        var inputPath = Path.Combine(projectRoot, "Inputs", inputFileName);
+        var outputPath = Path.Combine(projectRoot, "Outputs", outputFileName);
 
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-        var builder = new ContainerBuilder();
-
-        builder.RegisterModule(new TagsCloudModule(
+        var module = new TagsCloudModule(
             filePath: inputPath,
-            minFontSize: 10,
-            maxFontSize: 100,
-            centerX: 0,
-            centerY: 0));
+            minFontSize: minFontSize,
+            stopWords: stopWords);
 
-        using var container = builder.Build();
-        using var scope = container.BeginLifetimeScope();
+        using var scope = new TagsCloudScope(module);
 
-        var generator = scope.Resolve<IWordsLayoutGenerator>();
-
+        var generator = scope.GetGenerator();
         var layout = generator.GenerateLayout().ToArray();
 
-        CloudVisualizer.SaveLayoutToFile(outputPath, layout);
+        CloudVisualizer.SaveLayoutToFile(outputPath, layout, fontFamily, backgroundColor, textColor, imageSize);
     }
 }

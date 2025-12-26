@@ -10,66 +10,64 @@ public static class CloudVisualizer
     public static void SaveLayoutToFile(
         string filePath,
         IEnumerable<(string word, Rectangle rect, int fontSize)> layout,
+        string fontFamily,
+        Color? backgroundColor = null,
+        Color? textColor = null,
+        Size? imageSize = null,
         int padding = 50)
     {
         var elements = layout.ToArray();
 
         if (elements.Length == 0)
         {
-            using var emptyBitmap = new Bitmap(300, 300);
-            using var g = Graphics.FromImage(emptyBitmap);
-            g.Clear(Color.Black);
-            emptyBitmap.Save(filePath, ImageFormat.Png);
+            SaveEmptyImage(filePath, backgroundColor);
             return;
         }
+
+        var bounds = CalculateBounds(elements, padding);
+
+        var bitmapSize = imageSize ?? new Size(bounds.width, bounds.height);
+        using var bitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
+
+        using var graphics = CreateGraphics(bitmap, backgroundColor);
+
+        var offsetX = imageSize.HasValue ? (bitmap.Width - bounds.width) / 2 : 0;
+        var offsetY = imageSize.HasValue ? (bitmap.Height - bounds.height) / 2 : 0;
         
+        WordsDrawer.DrawWords(graphics, elements, bounds.minX, bounds.minY, padding, offsetX, offsetY, textColor, fontFamily);
+
+        bitmap.Save(filePath, ImageFormat.Png);
+    }
+
+    private static void SaveEmptyImage(string filePath, Color? backgroundColor)
+    {
+        using var bitmap = new Bitmap(300, 300);
+        using var graphics = Graphics.FromImage(bitmap);
+        graphics.Clear(backgroundColor ?? Color.Black);
+        bitmap.Save(filePath, ImageFormat.Png);
+    }
+
+    private static (int minX, int minY, int width, int height) CalculateBounds(
+        IEnumerable<(string word, Rectangle rect, int fontSize)> elements,
+        int padding)
+    {
         var minX = elements.Min(e => e.rect.Left);
         var maxX = elements.Max(e => e.rect.Right);
         var minY = elements.Min(e => e.rect.Top);
         var maxY = elements.Max(e => e.rect.Bottom);
 
-        var width = (maxX - minX) + padding * 2;
-        var height = (maxY - minY) + padding * 2;
+        var width = Math.Min((maxX - minX) + padding * 2, 5000);
+        var height = Math.Min((maxY - minY) + padding * 2, 5000);
 
-        width = Math.Min(width, 5000);
-        height = Math.Min(height, 5000);
+        return (minX, minY, width, height);
+    }
 
-        using var bitmap = new Bitmap(width, height);
-        using var graphics = Graphics.FromImage(bitmap);
-
+    private static Graphics CreateGraphics(Bitmap bitmap, Color? backgroundColor)
+    {
+        var graphics = Graphics.FromImage(bitmap);
         graphics.SmoothingMode = SmoothingMode.AntiAlias;
         graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-        graphics.Clear(Color.Black);
-
-        var random = new Random();
-
-        using var rectPen = new Pen(Color.White, 1);
-
-        foreach (var (word, rect, fontSize) in elements)
-        {
-            var shifted = rect with
-            {
-                X = rect.Left - minX + padding,
-                Y = rect.Top - minY + padding
-            };
-            
-            graphics.DrawRectangle(rectPen, shifted);
-
-            using var font = new Font("Arial", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-            using var brush = new SolidBrush(Color.FromArgb(
-                255,
-                random.Next(40, 255),
-                random.Next(40, 255),
-                random.Next(40, 255)));
-            
-            var textSize = graphics.MeasureString(word, font);
-            
-            var textX = shifted.Left + (shifted.Width - textSize.Width) / 2;
-            var textY = shifted.Top + (shifted.Height - textSize.Height) / 2;
-
-            graphics.DrawString(word, font, brush, new PointF(textX, textY));
-        }
-
-        bitmap.Save(filePath, ImageFormat.Png);
+        graphics.Clear(backgroundColor ?? Color.Black);
+        return graphics;
     }
 }
